@@ -21,9 +21,9 @@ app.get('/api/team', async(req, res, next)=> {
     }
 })
 
-app.get('/api/player', async(req, res, next)=> {
+app.get('/api/team/:id', async(req, res, next)=> {
     try {
-        res.send(await Player.findAll());
+        res.send(await Team.findByPk(req.params.id, {include: [Player]}));
     }
     catch (ex){
         next(ex);
@@ -31,14 +31,15 @@ app.get('/api/player', async(req, res, next)=> {
 })
 
 
-app.get('/api/player/:id', async(req, res, next)=> {
-    try {
-        res.send(await Player.findByPk(req.params.id, {include: [Team]}));
-    }
-    catch (ex){
-        next(ex);
-    }
-})
+// app.get('/api/player/:id', async(req, res, next)=> {
+//     try {
+     
+//         res.send(await Player.findByPk(req.params.id, {include: [Team]}));
+//     }
+//     catch (ex){
+//         next(ex);
+//     }
+// })
 
 const init = async()=> {
     try {
@@ -81,14 +82,13 @@ const syncAndSeed = async()=> {
     await Promise.all([
         Team.create({ team: 'Lakers', location: 'LA',  imgURL: 'lakersLogo.png'}),
         Team.create({ team: 'Nets', location: "BK",  imgURL: 'netsLogo.png' }),
-        Team.create({ team: 'Golden State', location: 'BAY',  imgURL:'goldeState.png'})
-    ]);
-    await Promise.all([
+        Team.create({ team: 'Golden State', location: 'BAY',  imgURL:'goldeState.png'}),
         Player.create({ name: 'Lebron', age: '36', bio: 'Best Player on this team', teamId: 1 }),
+        Player.create({ name: 'Anthony Davis', age: '36', bio: 'Best Player on this team', teamId: 1 }),
+        Player.create({ name: 'bindi', age: '36', bio: 'Best Player on this team', teamId: 1 }),
         Player.create({ name: 'Kyrie', age: '27', bio: 'Best Player on this team', teamId: 2 }),
         Player.create({ name: 'Steph',  age: '30', bio: 'Best Player on this team', teamId: 3 }),
           ]);
-
 
 };
 
@@ -96,3 +96,5 @@ const syncAndSeed = async()=> {
 
 
 init();
+
+
