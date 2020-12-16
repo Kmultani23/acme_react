@@ -48,7 +48,7 @@ app.post('/api/players', async(req, res, next) =>{
     }
 })
 
-app.delete('/api/players:id', async(req, res , next) => {
+app.delete('/api/players/:id', async(req, res , next) => {
     try{
         const player = await Player.findByPk(req.params.id);
         await player.destroy();
