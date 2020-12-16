@@ -2,13 +2,65 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import axios from 'axios';
 
-
+class CreatePlayer extends React.Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            name: '',
+            teamId: '',
+            
+        }
+        this.handleSumbit = this.handleSumbit.bind(this)
+        this.handleUsername = this.handleUsername.bind(this)
+        this.handleTeamId = this.handleTeamId.bind(this)
+    } 
+    async handleSumbit(){
+        const player = (await axios.post('/api/players',{ name: this.state.name , teamId: this.state.teamId} )).data
+    }
+    async handleUsername(ev){
+        this.setState({
+            name: ev.target.value
+        })
+    }
+    async handleTeamId(ev){
+        this.setState({
+            teamId: ev.target.value
+        })
+    }
+    render(){
+        const {name, age , bio } = this.state;
+        return (
+            <form onSubmit= {this.handleSumbit}>
+                <div>
+                <label>
+                    enter player name
+                </label>
+                <input type = 'text' 
+                value ={this.state.name}
+                 onChange ={this.handleUsername} /> 
+                 </div>
+                 <div>
+                <label>
+                    enter team id 
+                </label>
+                <input type = 'text' 
+                value ={this.state.teamId}
+                 onChange ={this.handleTeamId} /> 
+                 </div>
+                 <button type='submit'>Create Player</button>
+            </form>
+        )
+    }
+}
 class Player extends React.Component{
     constructor(){
         super();
         this.state = {
-        team: []
+        team: [],
+        loading: true
         };
+
+        this.handleDelete = this.handleDelete.bind(this);
     } 
    async componentDidMount(){
     this.setState({
@@ -17,22 +69,34 @@ class Player extends React.Component{
         
     });
 }
+    async handleDelete(id){
+        await axios.delete(`/api/players/${id}`);
+
+        this.setState({
+            team: (await axios.get('/api/team')).data,
+            loading: false
+        })
+    }
+    
     render(){
-        const { team } = this.state
-        console.log(team.players)
+        const { team, loading } = this.state
+        //console.log(team.players)
         // data = Array.from(players.data);
+        if(!loading){
         return (
             <div>
+                <CreatePlayer />
                 <a href='#'> ALL TEAMS</a>
-                <p> 'players go here'</p>
+                <p> 'current players'</p>
                 <p> {team.name}</p>
                 <ul>
-        {
+        {   
                team.players.map( player => {
                    return(
-                   <div>
-                   <li key ={ player.id }> 
+                   <div key ={ player.id }>
+                   <li> 
                     <p> {player.name}</p>
+                    <button onClick={()=> this.handleDelete(player.id)}>x</button>
                    </li> 
                    </div>
                    )
@@ -43,6 +107,11 @@ class Player extends React.Component{
             </div>
             )
     }
+    return (
+        <hr />
+    )
+}
+
 }
 const Teams = ({ team }) => {
     // console.log(team)

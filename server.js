@@ -20,6 +20,14 @@ app.get('/api/team', async(req, res, next)=> {
         next(ex);
     }
 })
+app.get('/api/players', async(req, res, next)=> {
+    try {
+        res.send(await Player.findAll());
+    }
+    catch (ex){
+        next(ex);
+    }
+})
 
 app.get('/api/team/:id', async(req, res, next)=> {
     try {
@@ -30,8 +38,27 @@ app.get('/api/team/:id', async(req, res, next)=> {
     }
 })
 
+app.post('/api/players', async(req, res, next) =>{
+    try{
+        const player = await Player.create(req.body)
+        res.send(player)
+    }
+    catch(ex){
+       next(ex)
+    }
+})
 
-// app.get('/api/player/:id', async(req, res, next)=> {
+app.delete('/api/players:id', async(req, res , next) => {
+    try{
+        const player = await Player.findByPk(req.params.id);
+        await player.destroy();
+        res.sendStatus(204);
+    }
+    catch(ex){
+        next(ex)
+    }
+})
+// app.get('/api/players/:id', async(req, res, next)=> {
 //     try {
      
 //         res.send(await Player.findByPk(req.params.id, {include: [Team]}));
@@ -85,9 +112,10 @@ const syncAndSeed = async()=> {
         Team.create({ team: 'Golden State', location: 'BAY',  imgURL:'goldeState.png'}),
         Player.create({ name: 'Lebron', age: '36', bio: 'Best Player on this team', teamId: 1 }),
         Player.create({ name: 'Anthony Davis', age: '36', bio: 'Best Player on this team', teamId: 1 }),
-        Player.create({ name: 'bindi', age: '36', bio: 'Best Player on this team', teamId: 1 }),
+        Player.create({ name: 'Kevin Durant', age: '36', bio: 'Best Player on this team', teamId: 2 }),
         Player.create({ name: 'Kyrie', age: '27', bio: 'Best Player on this team', teamId: 2 }),
         Player.create({ name: 'Steph',  age: '30', bio: 'Best Player on this team', teamId: 3 }),
+        Player.create({ name: 'Klay Thompson',  age: '30', bio: 'Best Player on this team', teamId: 3 }),
           ]);
 
 };
